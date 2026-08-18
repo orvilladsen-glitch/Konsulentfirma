@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Advisory — Organisation, ledelse og trivsel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#101B16;
+    --bg-panel:#1B2921;
+    --bg-panel-2:#22332A;
+    --mint:#9FD9C4;
+    --mint-dim:#5C8A78;
+    --gold:#E3B23C;
+    --gold-dim:#8A6C2C;
+    --text-main:#F4F1E8;
+    --text-muted:#A9B6AD;
+    --line:rgba(244,241,232,0.12);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg-deep);
+    color:var(--text-main);
+    font-family:'Inter',sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0 0 .4em;
+    letter-spacing:-0.01em;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.78rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--mint);
+    display:flex;
+    align-items:center;
+    gap:.6em;
+    margin-bottom:.9rem;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px; border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 0 3px rgba(227,178,60,0.22);
+  }
+  p{color:var(--text-muted); margin:0 0 1rem;}
+  a{color:var(--mint);}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+
+  /* reveal-on-scroll */
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in-view{opacity:1; transform:translateY(0);}
+  .reveal:nth-child(2){transition-delay:.08s;}
+  .reveal:nth-child(3){transition-delay:.16s;}
+  .reveal:nth-child(4){transition-delay:.24s;}
+
+  /* core mark */
+  .core-mark{width:22px; height:22px; position:relative; flex-shrink:0;}
+  .core-mark span{
+    position:absolute; border-radius:50%; border:1.5px solid var(--mint);
+  }
+  .core-mark span:nth-child(1){inset:0;}
+  .core-mark span:nth-child(2){inset:6px; border-color:var(--gold); background:var(--gold);}
+
+  /* nav */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(16,27,22,0.9);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1120px; margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.15rem;
+    color:var(--text-main); text-decoration:none;
+  }
+  .brand b{color:var(--mint); font-weight:600;}
+  nav.links{display:flex; gap:8px; list-style:none; margin:0; padding:0; align-items:center;}
+  nav.links a{
+    color:var(--text-muted); text-decoration:none; font-size:.9rem; font-weight:500;
+    transition:color .15s, background .15s; padding:8px 14px; border-radius:999px;
+  }
+  nav.links a:hover{color:var(--text-main); background:var(--bg-panel);}
+  .menu-btn{display:none; background:none; border:1px solid var(--line); color:var(--text-main); border-radius:8px; padding:8px 10px; cursor:pointer;}
+
+  /* buttons */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:.9rem;
+    padding:12px 20px; border-radius:999px; text-decoration:none;
+    border:1px solid transparent; cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .btn svg{width:16px; height:16px; transition:transform .18s ease;}
+  .btn-primary{background:var(--mint); color:#0E211A;}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(159,217,196,0.5);}
+  .btn-ghost{background:transparent; border-color:var(--line); color:var(--text-main);}
+  .btn-ghost:hover{border-color:var(--mint-dim); background:var(--bg-panel); transform:translateY(-2px);}
+  .btn:hover svg{transform:translateX(3px);}
+  .btn-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:1.8rem;}
+
+  /* hero */
+  .hero{
+    padding:120px 0 100px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:1px solid var(--line);
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.2fr .9fr; gap:56px; align-items:center;
+    position:relative;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 4.6vw, 3.5rem);
+    line-height:1.08;
+  }
+  .hero .lede{font-size:1.12rem; max-width:46ch;}
+  .founder-row{display:flex; gap:10px; margin-top:1.8rem;}
+  .founder-chip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-panel); border:1px solid var(--line);
+    border-radius:999px; padding:6px 14px 6px 6px;
+    font-size:.85rem; color:var(--text-main);
+  }
+  .founder-chip .dot{
+    width:26px; height:26px; border-radius:50%;
+    background:var(--mint-dim); color:var(--bg-deep);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:.75rem;
+  }
+
+  /* animated core visual */
+  .core-visual{
+    position:relative; width:100%; aspect-ratio:1/1; max-width:380px; margin:0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .core-ring{
+    position:absolute; border-radius:50%; border:1px solid var(--mint-dim); opacity:.5;
+  }
+  .core-ring.r1{width:100%; height:100%; animation:spin 40s linear infinite;}
+  .core-ring.r2{width:74%; height:74%; border-style:dashed; animation:spin 30s linear infinite reverse;}
+  .core-ring.r3{width:48%; height:48%; border-color:var(--gold-dim); animation:spin 22s linear infinite;}
+  .core-center{
+    width:22%; height:22%; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--gold), #B8862A 70%);
+    box-shadow:0 0 40px 6px rgba(227,178,60,0.35);
+    animation:pulse 3.2s ease-in-out infinite;
+    position:relative; z-index:2;
+  }
+  .core-dot{
+    position:absolute; width:9px; height:9px; border-radius:50%; background:var(--mint);
+    box-shadow:0 0 10px 2px rgba(159,217,196,0.6);
+  }
+  .core-dot.d1{top:2%; left:50%;}
+  .core-dot.d2{top:50%; left:99%;}
+  .core-dot.d3{top:50%; left:1%;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes pulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.08);}}
+
+  section{padding:96px 0; border-bottom:1px solid var(--line);}
+  .section-head{max-width:680px; margin-bottom:2.8rem;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);}
+
+  /* om os grid */
+  .lead-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:32px 34px; margin-bottom:24px;
+  }
+  .lead-card p{font-size:1.05rem; color:var(--text-main); margin:0;}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  .info-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 28px; transition:border-color .2s, transform .2s;
+  }
+  .info-card:hover{border-color:var(--mint-dim); transform:translateY(-3px);}
+  .info-card h3{font-size:1.05rem; color:var(--mint); margin-bottom:.6rem; font-weight:500; font-family:'Inter',sans-serif;}
+  .info-card p:last-child{margin-bottom:0;}
+
+  .mal-strat{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;}
+  .check-list{list-style:none; margin:0; padding:0;}
+  .check-list li{
+    display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line);
+    font-size:.92rem; color:var(--text-main);
+  }
+  .check-list li:last-child{border-bottom:none;}
+  .check-list svg{flex-shrink:0; width:18px; height:18px; margin-top:2px; color:var(--gold);}
+
+  /* team */
+  .team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .team-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px; text-align:left; transition:transform .2s, border-color .2s;
+  }
+  .team-card:hover{transform:translateY(-4px); border-color:var(--mint-dim);}
+  .avatar{
+    width:60px; height:60px; border-radius:50%;
+    background:linear-gradient(160deg, var(--mint-dim), var(--bg-panel-2));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:1.3rem; font-weight:600;
+    color:var(--bg-deep); margin-bottom:16px;
+  }
+  .team-card h3{font-size:1.15rem; margin-bottom:.1rem;}
+  .role-tag{font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--gold); text-transform:uppercase; letter-spacing:.06em;}
+  .mbti-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-top:14px;
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px;
+    padding:5px 12px 5px 5px; font-size:.78rem; text-decoration:none; color:var(--text-main);
+    transition:border-color .15s;
+  }
+  .mbti-badge:hover{border-color:var(--mint-dim);}
+  .mbti-badge .code{
+    background:var(--gold); color:#3B2C0E; font-family:'IBM Plex Mono',monospace;
+    font-weight:600; font-size:.72rem; padding:2px 8px; border-radius:999px;
+  }
+  .team-facts{list-style:none; margin:1rem 0 0; padding:0; border-top:1px solid var(--line); padding-top:1rem;}
+  .team-facts li{font-size:.85rem; color:var(--text-muted); margin-bottom:.7rem;}
+  .team-facts li b{color:var(--text-main); font-weight:500; display:block; margin-bottom:2px; font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; font-family:'IBM Plex Mono',monospace; color:var(--mint-dim);}
+
+  /* personality bars */
+  .profile-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .profile-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px;
+  }
+  .profile-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem;}
+  .profile-card-head h3{font-size:1.1rem; margin:0;}
+  .type-pill{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:.82rem;
+    background:var(--gold); color:#3B2C0E; padding:4px 12px; border-radius:999px;
+  }
+  .bar-row{margin-bottom:16px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-labels{display:flex; justify-content:space-between; font-size:.72rem; color:var(--text-muted); margin-bottom:5px;}
+  .bar-track{height:7px; border-radius:999px; background:var(--bg-panel-2); overflow:hidden; position:relative;}
+  .bar-fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg, var(--mint-dim), var(--mint)); transition:width 1.1s cubic-bezier(.2,.7,.2,1);}
+  .profile-blurb{margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--line); font-size:.85rem;}
+
+  /* jobindex table legacy kept as .jobindex-note */
+  .jobindex-note{font-size:.85rem; margin-top:1.4rem;}
+
+  /* belbin */
+  .belbin-intro{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px 30px; margin-bottom:2.4rem;
+  }
+  .belbin-intro p{color:var(--text-main); margin:0;}
+  .belbin-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .belbin-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:12px;
+    padding:18px 20px; cursor:pointer; transition:border-color .15s, background .15s, transform .15s;
+  }
+  .belbin-card:hover{transform:translateY(-2px);}
+  .belbin-card:hover, .belbin-card.open{border-color:var(--mint-dim); background:var(--bg-panel-2);}
+  .belbin-card h4{margin:0 0 6px; font-size:.98rem; font-family:'Inter',sans-serif; font-weight:600; color:var(--text-main);}
+  .belbin-card .num{font-family:'IBM Plex Mono',monospace; font-size:.68rem; color:var(--mint-dim); text-transform:uppercase; letter-spacing:.05em;}
+  .belbin-card .desc{
+    font-size:.85rem; color:var(--text-muted); margin-top:8px;
+    max-height:0; overflow:hidden; transition:max-height .25s ease;
+  }
+  .belbin-card.open .desc{max-height:140px;}
+
+  .roles-strip{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:2.4rem;}
+  .role-result{
+    border:1px solid var(--mint-dim); border-radius:var(--radius); padding:22px;
+    background:var(--bg-panel);
+  }
+  .role-result .name{font-family:'Fraunces',serif; font-size:1.1rem; display:flex; align-items:center; justify-content:space-between;}
+  .role-result .role-name{color:var(--gold); font-weight:600; font-size:.92rem; margin-top:.6rem; display:block;}
+  .role-result .why{font-size:.82rem; margin-top:.5rem; margin-bottom:0;}
+
+  footer{padding:60px 0 50px; text-align:center;}
+  footer .core-mark{margin:0 auto 14px;}
+  footer p{font-size:.85rem;}
+
+  @media (max-width:820px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-grid > div:last-child{order:-1;}
+    .grid-2, .team-grid, .belbin-grid, .roles-strip, .profile-grid, .mal-strat{grid-template-columns:1fr;}
+    nav.links{
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:stretch; background:var(--bg-panel);
+      padding:12px 28px 18px; gap:6px; border-bottom:1px solid var(--line);
+      display:none;
+    }
+    nav.links a{padding:10px 12px;}
+    nav.links.show{display:flex;}
+    .menu-btn{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <span class="core-mark"><span></span><span></span></span>
+      Core <b>Advisory</b>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Åbn menu">☰</button>
+    <nav>
+      <ul class="links" id="navLinks">
+        <li><a href="#om-os">Om os</a></li>
+        <li><a href="#teamet">Teamet</a></li>
+        <li><a href="#jobindex">Personlighed</a></li>
+        <li><a href="#belbin">Belbin</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="reveal in-view">
+        <span class="eyebrow">Organisation · Ledelse · Medarbejdertrivsel</span>
+        <h1>Vi hjælper organisationer med at finde deres kerne.</h1>
+        <p class="lede">Core Advisory hjælper virksomheder med at skabe en stærkere organisation gennem bedre ledelse, motivation og medarbejdertrivsel. Vi tager udgangspunkt i virksomhedens konkrete udfordringer og kombinerer relevante organisationsteorier med praktiske løsninger.</p>
+        <div class="founder-row">
+          <div class="founder-chip"><span class="dot">J</span> Jonas</div>
+          <div class="founder-chip"><span class="dot">O</span> Oscar</div>
+          <div class="founder-chip"><span class="dot">S</span> Sofus</div>
+        </div>
+        <div class="btn-row">
+          <a href="#om-os" class="btn btn-primary">Se vores tilgang
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#teamet" class="btn btn-ghost">Mød teamet</a>
+          <a href="#belbin" class="btn btn-ghost">Vores grupperoller</a>
+        </div>
+      </div>
+      <div class="reveal in-view">
+        <div class="core-visual" aria-hidden="true">
+          <div class="core-ring r1"></div>
+          <div class="core-ring r2"></div>
+          <div class="core-ring r3"></div>
+          <div class="core-center"></div>
+          <div class="core-dot d1"></div>
+          <div class="core-dot d2"></div>
+          <div class="core-dot d3"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="om-os">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Idégrundlag</span>
+        <h2>Om Core Advisory</h2>
+        <p>En konsulentvirksomhed hjælper andre virksomheder eller organisationer med at løse bestemte problemer eller udvikle deres organisation. Vi bruger vores viden og kompetencer til at analysere en situation og komme med konkrete forslag til løsninger.</p>
+      </div>
+
+      <div class="lead-card reveal">
+        <p>Core Advisory fokuserer på organisation, ledelse og medarbejdermotivation. Vi hjælper virksomheder og organisationer med at skabe bedre trivsel, motivation og ledelse blandt deres medarbejdere — med et konstant fokus på det, der udgør organisationens kerne.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="info-card reveal">
+          <h3>Vision</h3>
+          <p>At blive et førende konsulentbureau inden for organisation og ledelse, som hjælper virksomheder med at skabe attraktive arbejdspladser, hvor medarbejdere trives og præsterer.</p>
+        </div>
+        <div class="info-card reveal">
+          <h3>Mission</h3>
+          <p>Vores mission er at gøre organisationer bedre gennem motiverende ledelse, stærke arbejdsrelationer og konkrete løsninger, der kan anvendes i praksis.</p>
+        </div>
+      </div>
+
+      <div class="mal-strat">
+        <div class="info-card reveal">
+          <h3>Mål</h3>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>At udvikle konkrete løsninger på organisationers udfordringer</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>At øge medarbejdernes motivation og trivsel</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>At skabe bedre ledelse og samarbejde</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>At bruge relevante organisationsteorier til at finde løsninger</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>At skabe målbare forbedringer for vores kunder</li>
+          </ul>
+        </div>
+        <div class="info-card reveal">
+          <h3>Strategier</h3>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Analysere organisationens nuværende situation</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Undersøge medarbejdernes behov og motivation</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Anvende relevante motivationsteorier</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Udarbejde konkrete forslag til ledelsen</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Følge op på, om løsningerne skaber resultater</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="teamet">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Holdet bag</span>
+        <h2>Jer selv</h2>
+        <p>Tre partnere, alle 19 år, med hver deres erfaring og personlighedsprofil — det giver Core Advisory en bred kompetenceprofil at rådgive ud fra.</p>
+      </div>
+      <div class="team-grid">
+
+        <div class="team-card reveal">
+          <div class="avatar">J</div>
+          <h3>Jonas</h3>
+          <span class="role-tag">CEO &amp; Partner</span>
+          <a href="#jonas-profil" class="mbti-badge">Personlighedstype <span class="code">ENTJ</span></a>
+          <ul class="team-facts">
+            <li><b>Alder</b>19 år</li>
+            <li><b>Joberfaring</b>Børnehavemedhjælper, tjener på restaurant, selvstændig (secondhand tøjvirksomhed), CEO af selvstændig tøjvirksomhed</li>
+          </ul>
+        </div>
+
+        <div class="team-card reveal">
+          <div class="avatar">O</div>
+          <h3>Oscar</h3>
+          <span class="role-tag">CFO &amp; Partner</span>
+          <a href="#oscar-profil" class="mbti-badge">Personlighedstype <span class="code">INTP</span></a>
+          <ul class="team-facts">
+            <li><b>Alder</b>19 år</li>
+            <li><b>Joberfaring</b>Mejerist, lagermedarbejder hos Rema 1000, tjener i køkken, CFO af egen selvstændig virksomhed</li>
+          </ul>
+        </div>
+
+        <div class="team-card reveal">
+          <div class="avatar">S</div>
+          <h3>Sofus</h3>
+          <span class="role-tag">COO &amp; Partner</span>
+          <a href="#sofus-profil" class="mbti-badge">Personlighedstype <span class="code">ISFJ</span></a>
+          <ul class="team-facts">
+            <li><b>Alder</b>19 år</li>
+            <li><b>Joberfaring</b>Coop 365-medarbejder, børnehave og café, COO af egen selvstændig tøjvirksomhed</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="jobindex">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Testresultater</span>
+        <h2>Personlighedstest</h2>
+        <p>Alle tre partnere har gennemført en personlighedstest. Resultaterne bruger vi til at forstå vores egne styrker — og de danner grundlag for vores Belbin-roller herunder.</p>
+      </div>
+
+      <div class="profile-grid">
+
+        <div class="profile-card reveal" id="jonas-profil">
+          <div class="profile-card-head"><h3>Jonas</h3><span class="type-pill">ENTJ</span></div>
+          <div class="bar-row"><div class="bar-labels"><span>Ekstrovert 55%</span><span>Introvert 45%</span></div><div class="bar-track"><div class="bar-fill" data-pct="55"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Sansning 45%</span><span>Intuitiv 55%</span></div><div class="bar-track"><div class="bar-fill" data-pct="45"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Tænkning 73%</span><span>Følen 27%</span></div><div class="bar-track"><div class="bar-fill" data-pct="73"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Vurderende 88%</span><span>Opfattende 12%</span></div><div class="bar-track"><div class="bar-fill" data-pct="88"></div></div></div>
+          <p class="profile-blurb">ENTJ-typen er typisk beslutsom og fremadrettet, med stærk sans for struktur og resultater. Jonas' høje score på tænkning og det meget markante udslag mod "vurderende" peger på en person, der tager beslutninger hurtigt og holder fokus på at få tingene i mål.</p>
+        </div>
+
+        <div class="profile-card reveal" id="oscar-profil">
+          <div class="profile-card-head"><h3>Oscar</h3><span class="type-pill">INTP</span></div>
+          <div class="bar-row"><div class="bar-labels"><span>Ekstrovert 45%</span><span>Introvert 55%</span></div><div class="bar-track"><div class="bar-fill" data-pct="45"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Sansning 0%</span><span>Intuitiv 100%</span></div><div class="bar-track"><div class="bar-fill" data-pct="0"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Tænkning 55%</span><span>Følen 45%</span></div><div class="bar-track"><div class="bar-fill" data-pct="55"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Vurderende 36%</span><span>Opfattende 64%</span></div><div class="bar-track"><div class="bar-fill" data-pct="36"></div></div></div>
+          <p class="profile-blurb">INTP-typen tænker analytisk og teoretisk, og er god til at se mønstre andre overser. Oscars markante udslag mod intuition viser en, der hurtigt kobler idéer sammen, mens den høje "opfattende"-score peger på en fleksibel tilgang, hvor flere muligheder holdes åbne.</p>
+        </div>
+
+        <div class="profile-card reveal" id="sofus-profil">
+          <div class="profile-card-head"><h3>Sofus</h3><span class="type-pill">ISFJ</span></div>
+          <div class="bar-row"><div class="bar-labels"><span>Ekstrovert 25%</span><span>Introvert 75%</span></div><div class="bar-track"><div class="bar-fill" data-pct="25"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Sansning 55%</span><span>Intuitiv 45%</span></div><div class="bar-track"><div class="bar-fill" data-pct="55"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Tænkning 45%</span><span>Følen 55%</span></div><div class="bar-track"><div class="bar-fill" data-pct="45"></div></div></div>
+          <div class="bar-row"><div class="bar-labels"><span>Vurderende 64%</span><span>Opfattende 36%</span></div><div class="bar-track"><div class="bar-fill" data-pct="64"></div></div></div>
+          <p class="profile-blurb">ISFJ-typen er ofte omsorgsfuld, loyal og god til at holde styr på detaljer, så alt omkring gruppen er tilrettelagt. Sofus' udslag mod introvert og "vurderende" stemmer godt overens med en, der foretrækker struktur og faste rammer for at kunne præstere sit bedste.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="belbin">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Grupperoller</span>
+        <h2>Belbins grupperolle-model</h2>
+        <p>Belbins grupperolle-model beskriver ni forskellige roller, som personer typisk indtager, når de arbejder i en gruppe. Klik på en rolle for at læse mere.</p>
+      </div>
+
+      <div class="belbin-intro reveal">
+        <p>I Core Advisory har vi forskellige Belbin-roller, hvilket giver os en bredere samlet kompetenceprofil. Vores forskellige roller betyder, at nogle af os er gode til at udvikle idéer, mens andre er stærke inden for analyse, struktur, samarbejde og gennemførelse. Det gør os i stand til at løse konsulentopgaver fra flere forskellige perspektiver.</p>
+      </div>
+
+      <div class="belbin-grid" id="belbinGrid">
+        <div class="belbin-card"><span class="num">01</span><h4>Idéskaberen</h4><p class="desc">Kreativ og god til at komme med nye idéer. Tænker utraditionelt og løser komplekse problemer, men kan miste blikket for detaljer.</p></div>
+        <div class="belbin-card"><span class="num">02</span><h4>Kontaktskaberen</h4><p class="desc">Udadvendt og god til at skabe kontakter. Finder muligheder og netværker uden for gruppen, men kan miste interessen efter den første begejstring.</p></div>
+        <div class="belbin-card"><span class="num">03</span><h4>Koordinatoren</h4><p class="desc">God til at skabe overblik og fordele opgaver. Afklarer mål og får gruppen til at trække i samme retning.</p></div>
+        <div class="belbin-card"><span class="num">04</span><h4>Igangsætteren</h4><p class="desc">Får gruppen til at handle og holde tempoet. Presser på for resultater under pres, men kan virke konfronterende.</p></div>
+        <div class="belbin-card"><span class="num">05</span><h4>Analytikeren</h4><p class="desc">Vurderer idéer kritisk og logisk. Nøgtern og strategisk, men kan mangle drivkraft til at inspirere andre.</p></div>
+        <div class="belbin-card"><span class="num">06</span><h4>Teamworker</h4><p class="desc">God til samarbejde og skaber god stemning. Lytter og glatter gnidninger ud, men kan have svært ved at træffe upopulære beslutninger.</p></div>
+        <div class="belbin-card"><span class="num">07</span><h4>Implementeren</h4><p class="desc">God til at omsætte idéer til konkrete handlinger. Disciplineret og pålidelig, men kan være lidt ufleksibel over for nye idéer.</p></div>
+        <div class="belbin-card"><span class="num">08</span><h4>Afslutteren</h4><p class="desc">Fokuserer på detaljer og sørger for, at ting bliver færdige. Samvittighedsfuld og grundig, men kan bekymre sig for meget.</p></div>
+        <div class="belbin-card"><span class="num">09</span><h4>Specialisten</h4><p class="desc">Har særlig viden inden for et bestemt område. Fagligt engageret, men interesserer sig ofte kun for eget felt.</p></div>
+      </div>
+
+      <div class="section-head" style="margin-top:3.4rem;">
+        <span class="eyebrow">Vores roller</span>
+        <h2>Hvem er hvad i Core Advisory?</h2>
+        <p>Ud fra vores personlighedstest og den måde, vi arbejder sammen på, har vi vurderet vores primære Belbin-roller sådan her:</p>
+      </div>
+      <div class="roles-strip">
+        <div class="role-result reveal">
+          <div class="name">Jonas <span class="role-tag">ENTJ</span></div>
+          <span class="role-name">Igangsætteren</span>
+          <p class="why">Jonas' stærke udslag mod tænkning og "vurderende" viser en, der driver gruppen fremad og holder fokus på at nå målet, selv under pres.</p>
+        </div>
+        <div class="role-result reveal">
+          <div class="name">Oscar <span class="role-tag">INTP</span></div>
+          <span class="role-name">Idéskaberen</span>
+          <p class="why">Oscars markante intuition og analytiske tilgang gør ham stærk til at tænke nye løsninger og se sammenhænge, andre overser.</p>
+        </div>
+        <div class="role-result reveal">
+          <div class="name">Sofus <span class="role-tag">ISFJ</span></div>
+          <span class="role-name">Teamworker</span>
+          <p class="why">Sofus' omsorgsfulde og strukturerede tilgang gør ham til den, der holder sammen på gruppen og sikrer, at alle trives undervejs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="kontakt">
+    <div class="wrap">
+      <span class="core-mark" style="margin:0 auto 14px; display:block;"><span></span><span></span></span>
+      <p style="color:var(--text-main); font-weight:500;">Core Advisory</p>
+      <p>Skoleprojekt — Silkeborg Handelsgymnasium, HHX</p>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', function(){
+    document.getElementById('navLinks').classList.toggle('show');
+  });
+  document.querySelectorAll('#navLinks a').forEach(function(a){
+    a.addEventListener('click', function(){
+      document.getElementById('navLinks').classList.remove('show');
+    });
+  });
+  document.querySelectorAll('.belbin-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      var isOpen = card.classList.contains('open');
+      document.querySelectorAll('.belbin-card').forEach(function(c){ c.classList.remove('open'); });
+      if(!isOpen){ card.classList.add('open'); }
+    });
+  });
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        if(entry.target.classList.contains('profile-card')){
+          entry.target.querySelectorAll('.bar-fill').forEach(function(bar){
+            bar.style.width = bar.getAttribute('data-pct') + '%';
+          });
+        }
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+</script>
+
+</body>
+</html>
